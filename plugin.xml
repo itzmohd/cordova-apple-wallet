@@ -29,7 +29,7 @@
         
         <config-file target="*/Entitlements-Debug.plist" parent="com.apple.developer.pass-type-identifiers">
             <array>
-                <string>com.alsalambahrain.digitalbankingdev</string>                
+                <string>com.alsalambahrain.digitalbanking</string>                
             </array>
         </config-file>
         <js-module src="www/appleWallet.js" name="AppleWallet">
