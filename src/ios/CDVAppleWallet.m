@@ -112,13 +112,13 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
-// Plugin Method - check Card Eligibility By Suffix
 - (void) checkCardEligibilityBySuffix:(CDVInvokedUrlCommand*)command {
     NSString * cardSuffix = [command.arguments objectAtIndex:0];
     Boolean cardEligible = true;
     Boolean cardAddedtoPasses = false;
     Boolean cardAddedtoRemotePasses = false;
     
+    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
     PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
 //     NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
     NSArray *paymentPasses = [[NSArray alloc] init];
@@ -149,7 +149,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
             paymentPasses = [passLibrary remoteSecureElementPasses];
             for (PKSecureElementPass *pass in paymentPasses) {
               if ([[pass primaryAccountNumberSuffix] isEqualToString:cardSuffix]) {
-                cardAddedtoPasses = true;
+                cardAddedtoRemotePasses = true;
               }
             }
           } else {
@@ -166,12 +166,28 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
             //cardAddedtoRemotePasses = true;
     }
     //else
-       // cardAddedtoRemotePasses = true;
+        //cardAddedtoRemotePasses = true;
     
-    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
+    if (cardAddedtoPasses) { 
+        [dictionary setObject:@"True" forKey:@"cardAddedtoPasses"];
+        } else {
+        [dictionary setObject:@"False" forKey:@"cardAddedtoPasses"];
+    }
+    if (cardAddedtoRemotePasses) { 
+        [dictionary setObject:@"True" forKey:@"cardAddedtoRemotePasses"];
+        } else {
+        [dictionary setObject:@"False" forKey:@"cardAddedtoRemotePasses"];
+    }
+    if (cardEligible) { 
+        [dictionary setObject:@"True" forKey:@"cardEligible"];
+        } else {
+        [dictionary setObject:@"False" forKey:@"cardEligible"];
+    }       
+    
+    //cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
     
     CDVPluginResult *pluginResult;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
 
