@@ -162,11 +162,11 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
             }
 
         }
-        else
-            cardAddedtoRemotePasses = true;
+        //else
+            //cardAddedtoRemotePasses = true;
     }
-    else
-        cardAddedtoRemotePasses = true;
+    //else
+       // cardAddedtoRemotePasses = true;
     
     cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
     
