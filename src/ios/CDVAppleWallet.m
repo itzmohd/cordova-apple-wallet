@@ -143,7 +143,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     NSString * cardAddedtoPassesResult = @"";
     NSString * cardAddedtoRemotePassesResult = @"";
     
-    if(cardAddedtoPasses){
+    /*if(cardAddedtoPasses){
       cardAddedtoPassesResult = @"Success";
     }
     else{
@@ -155,7 +155,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     }
     else{
       cardAddedtoRemotePassesResult = @"Failed";
-    }
+    }*/
     
     [dictionary setObject:cardAddedtoPassesResult forKey:@"cardAddedtoPasses"];
     [dictionary setObject:cardAddedtoRemotePassesResult forKey:@"cardAddedtoRemotePasses"];
