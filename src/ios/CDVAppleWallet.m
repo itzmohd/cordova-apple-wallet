@@ -55,7 +55,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     
     NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
     
-    NSString * cardFPAN = [self getCardFPAN:cardIdentifier];
+    NSString * cardFPAN = cardIdentifier;// [self getCardFPAN:cardIdentifier];
     
     [dictionary setObject:cardFPAN forKey:@"cardFPAN"];
     
