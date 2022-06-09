@@ -112,9 +112,9 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
     cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;*/
     
-    if (@available(iOS 13.5, *)){
-      PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
-      NSArray *paymentPasses = [[NSArray alloc] init];
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray *paymentPasses = [[NSArray alloc] init];
+    if (@available(iOS 13.5, *)){      
       [dictionary setObject:@"true" forKey:@"ios13"];
       paymentPasses = [passLibrary passesOfType: PKPassTypeSecureElement];
         for (PKPass *pass in paymentPasses) {
@@ -123,43 +123,12 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
             if ([[paymentPass deviceAccountNumberSuffix] isEqualToString:cardSuffix]) {
                 cardAddedtoPasses = true;
                 [dictionary setObject:@"true" forKey:@"cardAddedtoPassesIos13"];
+                }
             }
-    }}
+    }
     else {
       [dictionary setObject:@"false" forKey:@"ios13"];
     }
-    
-
-    /*NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypeSecureElement];
-    for (PKPass *pass in paymentPasses) {
-        [dictionary setObject:@"test1" forKey:@"cardFPAN22"];
-        PKSecureElementPass * paymentPass = [pass secureElementPass];
-        if([[paymentPass primaryAccountNumberSuffix] isEqualToString:cardIdentifier])
-            [dictionary setObject:@"true" forKey:@"cardFPAN2"];//return [paymentPass primaryAccountIdentifier];
-        else
-            [dictionary setObject:@"false" forKey:@"cardFPAN2"];
-    }*/
-    
-    NSString * cardAddedtoPassesResult = @"";
-    NSString * cardAddedtoRemotePassesResult = @"";
-    
-    /*if(cardAddedtoPasses){
-      cardAddedtoPassesResult = @"Success";
-    }
-    else{
-      cardAddedtoPassesResult = @"Failed";
-    }
-    
-    if(cardAddedtoRemotePasses){
-      cardAddedtoRemotePassesResult = @"Success";
-    }
-    else{
-      cardAddedtoRemotePassesResult = @"Failed";
-    }*/
-    
-    [dictionary setObject:cardAddedtoPassesResult forKey:@"cardAddedtoPasses"];
-    [dictionary setObject:cardAddedtoRemotePassesResult forKey:@"cardAddedtoRemotePasses"];
-    //[dictionary setObject:cardEligible forKey:@"cardEligible"];
     
     CDVPluginResult *pluginResult;
     pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
