@@ -120,7 +120,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         for (PKPass *pass in paymentPasses) {
             PKSecureElementPass *paymentPass = [pass secureElementPass];
             [dictionary setObject:@"true" forKey:@"ios133"];
-            if ([[paymentPass deviceAccountNumberSuffix] isEqualToString:cardSuffix]) {
+            if ([[paymentPass deviceAccountNumberSuffix] isEqualToString:cardIdentifier]) {
                 cardAddedtoPasses = true;
                 [dictionary setObject:@"true" forKey:@"cardAddedtoPassesIos13"];
                 }
