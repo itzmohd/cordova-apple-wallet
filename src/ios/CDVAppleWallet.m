@@ -59,7 +59,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     
     [dictionary setObject:cardFPAN forKey:@"cardFPAN"];
     
-    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+   /* PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
 //     NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
     NSArray *paymentPasses = [[NSArray alloc] init];
     if (@available(iOS 13.5, *)) { // PKPassTypePayment is deprecated in iOS13.5
@@ -110,7 +110,15 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     else
         cardAddedtoRemotePasses = true;
 
-    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
+    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;*/
+    
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+    NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypeSecureElement];
+    for (PKPass *pass in paymentPasses) {
+        PKSecureElementPass * paymentPass = [pass secureElementPass];
+        if([[paymentPass primaryAccountNumberSuffix] isEqualToString:cardIdentifier])
+            [dictionary setObject:@"true" forKey:@"cardFPAN2"];//return [paymentPass primaryAccountIdentifier];
+    }
     
     NSString * cardAddedtoPassesResult = @"";
     NSString * cardAddedtoRemotePassesResult = @"";
