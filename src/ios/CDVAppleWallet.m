@@ -113,26 +113,23 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;*/
     
     if (@available(iOS 13.5, *)){
+      PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+      NSArray *paymentPasses = [[NSArray alloc] init];
       [dictionary setObject:@"true" forKey:@"ios13"];
+      paymentPasses = [passLibrary passesOfType: PKPassTypeSecureElement];
+        for (PKPass *pass in paymentPasses) {
+            PKSecureElementPass *paymentPass = [pass secureElementPass];
+            [dictionary setObject:@"true" forKey:@"ios133"];
+            if ([[paymentPass deviceAccountNumberSuffix] isEqualToString:cardSuffix] || [[paymentPass primaryAccountNumberSuffix] isEqualToString:cardSuffix]) {
+                cardAddedtoPasses = true;
+                [dictionary setObject:@"true" forKey:@"cardAddedtoPassesIos13"];
+            }
     }
     else {
       [dictionary setObject:@"false" forKey:@"ios13"];
     }
     
-    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
-    NSArray *paymentPasses = [[NSArray alloc] init];
-    paymentPasses = [passLibrary passesOfType: PKPassTypeSecureElement];
-      for (PKPass *pass in paymentPasses) {
-      [dictionary setObject:@"test1" forKey:@"cardFPAN22"];
-        PKSecureElementPass *paymentPass = [pass secureElementPass];
-        if ([[paymentPass deviceAccountNumberSuffix] isEqualToString:cardIdentifier]) {
-          cardAddedtoPasses = true;
-          [dictionary setObject:@"true" forKey:@"cardFPAN2"];//return [paymentPass primaryAccountIdentifier];
-        }
-        else{
-          [dictionary setObject:@"false" forKey:@"cardFPAN2"];
-        }
-      }
+
     /*NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypeSecureElement];
     for (PKPass *pass in paymentPasses) {
         [dictionary setObject:@"test1" forKey:@"cardFPAN22"];
