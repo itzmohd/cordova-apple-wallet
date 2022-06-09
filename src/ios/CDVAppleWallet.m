@@ -124,7 +124,7 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
                 cardAddedtoPasses = true;
                 [dictionary setObject:@"true" forKey:@"cardAddedtoPassesIos13"];
             }
-    }
+    }}
     else {
       [dictionary setObject:@"false" forKey:@"ios13"];
     }
