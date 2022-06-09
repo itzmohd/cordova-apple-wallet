@@ -55,9 +55,9 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     
     NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
     
-    cardIdentifier = [self getCardFPAN:cardIdentifier];
+    NSString * cardFPAN = [self getCardFPAN:cardIdentifier];
     
-    [dictionary setObject:cardIdentifier forKey:@"cardIdentifier"];
+    [dictionary setObject:cardFPAN forKey:@"cardFPAN"];
     
     PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
 //     NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
@@ -112,12 +112,29 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
     cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
     
-    [dictionary setObject:cardAddedtoPasses forKey:@"cardAddedtoPasses"];
-    [dictionary setObject:cardAddedtoRemotePasses forKey:@"cardAddedtoRemotePasses"];
-    [dictionary setObject:cardEligible forKey:@"cardEligible"];
+    NSString * cardAddedtoPassesResult = "";
+    NSString * cardAddedtoRemotePassesResult = "";
+    
+    if(cardAddedtoPasses){
+      cardAddedtoPassesResult = "Success";
+    }
+    else{
+      cardAddedtoPassesResult = "Failed";
+    }
+    
+    if(cardAddedtoRemotePasses){
+      cardAddedtoRemotePassesResult = "Success";
+    }
+    else{
+      cardAddedtoRemotePassesResult = "Failed";
+    }
+    
+    [dictionary setObject:cardAddedtoPassesResult forKey:@"cardAddedtoPasses"];
+    [dictionary setObject:cardAddedtoRemotePassesResult forKey:@"cardAddedtoRemotePasses"];
+    //[dictionary setObject:cardEligible forKey:@"cardEligible"];
     
     CDVPluginResult *pluginResult;
-    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
     //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
     //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[passLibrary canAddPaymentPassWithPrimaryAccountIdentifier:cardIdentifier]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
