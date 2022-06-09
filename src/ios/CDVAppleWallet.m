@@ -118,6 +118,8 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
         PKSecureElementPass * paymentPass = [pass secureElementPass];
         if([[paymentPass primaryAccountNumberSuffix] isEqualToString:cardIdentifier])
             [dictionary setObject:@"true" forKey:@"cardFPAN2"];//return [paymentPass primaryAccountIdentifier];
+        else
+          [dictionary setObject:@"false" forKey:@"cardFPAN2"];
     }
     
     NSString * cardAddedtoPassesResult = @"";
