@@ -53,6 +53,12 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
     Boolean cardAddedtoPasses = false;
     Boolean cardAddedtoRemotePasses = false;
     
+    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+    
+    cardIdentifier = [self getCardFPAN:cardIdentifier];
+    
+    [dictionary setObject:cardIdentifier forKey:@"cardIdentifier"];
+    
     PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
 //     NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
     NSArray *paymentPasses = [[NSArray alloc] init];
@@ -106,8 +112,13 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
     cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
     
+    [dictionary setObject:cardAddedtoPasses forKey:@"cardAddedtoPasses"];
+    [dictionary setObject:cardAddedtoRemotePasses forKey:@"cardAddedtoRemotePasses"];
+    [dictionary setObject:cardEligible forKey:@"cardEligible"];
+    
     CDVPluginResult *pluginResult;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
+    CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
+    //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
     //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[passLibrary canAddPaymentPassWithPrimaryAccountIdentifier:cardIdentifier]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
