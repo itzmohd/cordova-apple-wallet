@@ -48,35 +48,66 @@ typedef void (^completedPaymentProcessHandler)(PKAddPaymentPassRequest *request)
 
 // Plugin Method - check Card Eligibility
 - (void) checkCardEligibility:(CDVInvokedUrlCommand*)command {
-    NSString * cardIdentifier = [command.arguments objectAtIndex:0];    
-    NSMutableDictionary* dictionary = [[NSMutableDictionary alloc] init];
+    NSString * cardIdentifier = [command.arguments objectAtIndex:0];
+    Boolean cardEligible = true;
+    Boolean cardAddedtoPasses = false;
+    Boolean cardAddedtoRemotePasses = false;
     
-    [dictionary setObject:@"False" forKey:@"isInWallet"];
-    [dictionary setObject:@"False" forKey:@"isInWatch"];
-    [dictionary setObject:@"" forKey:@"FPANID"];
-    PKPassLibrary *passLib = [[PKPassLibrary alloc] init];
+    PKPassLibrary *passLibrary = [[PKPassLibrary alloc] init];
+//     NSArray<PKPass *> *paymentPasses = [passLibrary passesOfType:PKPassTypePayment];
+    NSArray *paymentPasses = [[NSArray alloc] init];
+    if (@available(iOS 13.5, *)) { // PKPassTypePayment is deprecated in iOS13.5
+      paymentPasses = [passLibrary passesOfType: PKPassTypeSecureElement];
+      for (PKPass *pass in paymentPasses) {
+        PKSecureElementPass *paymentPass = [pass secureElementPass];
+        if ([[paymentPass primaryAccountIdentifier] isEqualToString:cardIdentifier]) {
+          cardAddedtoPasses = true;
+        }
+      }
+    } else {
+      paymentPasses = [passLibrary passesOfType: PKPassTypePayment];
+      for (PKPass *pass in paymentPasses) {
+        PKPaymentPass *paymentPass = [pass paymentPass];
+        if([[paymentPass primaryAccountIdentifier] isEqualToString:cardIdentifier]) {
+          cardAddedtoPasses = true;
+        }
+      }
+    }
+    
+    if (WCSession.isSupported) { // check if the device support to handle an Apple Watch
+        WCSession *session = [WCSession defaultSession];
+        [session setDelegate:self.appDelegate];
+        [session activateSession];
+        
+        if ([session isPaired]) { // Check if the iPhone is paired with the Apple Watch
 
-    // find if credit/debit card is exist in any pass container e.g. iPad
-    for (PKPaymentPass *pass in [passLib passesOfType:PKPassTypeSecureElement]){
-        if ([pass.primaryAccountNumberSuffix isEqualToString:cardIdentifier]) {
-            [dictionary setObject:@"True" forKey:@"isInWallet"];
-            [dictionary setObject:pass.primaryAccountIdentifier forKey:@"FPANID"];
-            break;
+          if (@available(iOS 13.5, *)) {
+                paymentPasses = [passLibrary remoteSecureElementPasses]; // remotePaymentPasses is deprecated in iOS13.5
+                for (PKSecureElementPass *pass in paymentPasses) {
+                    if ([[pass primaryAccountIdentifier] isEqualToString:cardIdentifier]) {
+                        cardAddedtoRemotePasses = true;
+                    }
+                }
+            } else {
+                paymentPasses = [passLibrary remotePaymentPasses];
+                for (PKPass *pass in paymentPasses) {
+                    PKPaymentPass * paymentPass = [pass paymentPass];
+                    if([[paymentPass primaryAccountIdentifier] isEqualToString:cardIdentifier])
+                        cardAddedtoRemotePasses = true;
+                }
+            }
+          
         }
+        else
+            cardAddedtoRemotePasses = true;
     }
-    
-    // find if credit/debit card is exist in any remote pass container e.g. iWatch
-    for (PKPaymentPass *remotePass in [passLib remoteSecureElementPasses]){
-        if([remotePass.primaryAccountNumberSuffix isEqualToString:cardIdentifier]){
-            [dictionary setObject:@"True" forKey:@"isInWatch"];
-            [dictionary setObject:remotePass.primaryAccountIdentifier forKey:@"FPANID"];
-            break;
-        }
-    }
+    else
+        cardAddedtoRemotePasses = true;
+
+    cardEligible = !cardAddedtoPasses || !cardAddedtoRemotePasses;
     
     CDVPluginResult *pluginResult;
-    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:dictionary];
-    //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
+    pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:cardEligible];
     //pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsBool:[passLibrary canAddPaymentPassWithPrimaryAccountIdentifier:cardIdentifier]];
     [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
 }
