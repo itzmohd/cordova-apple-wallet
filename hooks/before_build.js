@@ -13,7 +13,7 @@ module.exports = function (ctx) {
     // var path = ctx.requireCordovaModule('path');
     var rootdir = "";
     var config = fs.readFileSync("config.xml").toString();
-    var name = getValue(config, "name");
+    var name = 'AlSalam Bank.xcodeproj';//getValue(config, "name");
 
 
     function getValue(config, name) {
