@@ -41,9 +41,15 @@ module.exports = function (ctx) {
 
                 var srcFile_h = "plugins/cordova-apple-wallet/src/ios/AppDelegateHeader.text";
                 var srcFile_m = "plugins/cordova-apple-wallet/src/ios/AppDelegateImp.text";
+
+                console.log("Meow");
+                console.log("name: "+name);
                 
-                var destFile_h = path.join(rootdir, "platforms/ios/" + name + "/Classes/AppDelegate.h");
-                var destFile_m = path.join(rootdir, "platforms/ios/" + name + "/Classes/AppDelegate.m");
+                var destFile_h = path.join(rootdir, "platforms/ios/AlSalam Bank" + "/Classes/AppDelegate.h");
+                var destFile_m = path.join(rootdir, "platforms/ios/AlSalam Bank" + "/Classes/AppDelegate.m");
+
+                // var destFile_h = path.join(rootdir, "platforms/ios/" + name + "/Classes/AppDelegate.h");
+                // var destFile_m = path.join(rootdir, "platforms/ios/" + name + "/Classes/AppDelegate.m");
 
                 setTimeout(function() {
                     fs.createReadStream(srcFile_h).pipe(fs.createWriteStream(destFile_h));
