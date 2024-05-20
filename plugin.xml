@@ -13,7 +13,7 @@
 
     <platform name="ios">
 
-<!--         <hook src="hooks/before_build.js" type="before_build" /> -->
+        <hook src="hooks/before_build.js" type="before_build" />
 
         <config-file target="config.xml" parent="/*">
             <feature name="AppleWallet">
